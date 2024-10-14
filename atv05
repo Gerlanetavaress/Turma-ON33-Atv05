@@ -1,0 +1,131 @@
+# Parte 1
+class Aluna:
+    def __init__(self, nome, sobrenome, turma, notas, presenca, participacao):
+        self.nome = nome
+        self.sobrenome = sobrenome
+        self.turma = turma
+        self.notas = notas
+        self.presenca = presenca
+        self.participacao = participacao
+
+base_de_dados = []
+
+def validar_notas(notas):
+    for nota in notas:
+        if nota < 0 or nota > 10:
+            return False
+    return True
+
+def adicionar_aluna():
+    nome = input("Digite o nome da aluna: ")
+    sobrenome = input("Digite o sobrenome da aluna: ")
+    turma = input("Digite a turma da aluna: ")
+
+    notas = list(map(float, input("Digite as notas da aluna separadas por espaço: ").split()))
+    if not validar_notas(notas):
+        print("Erro: as notas devem estar entre 0 e 10. A aluna não foi adicionada.")
+        return
+
+    presenca = list(map(lambda x: x.lower() == 'true', input("Digite a presença (True/False) para cada aula separada por espaço: ").split()))
+
+    participacao = float(input("Digite a nota de participação da aluna: "))
+    if participacao < 0 or participacao > 10:
+        print("Erro: a nota de participação deve estar entre 0 e 10. A aluna não foi adicionada.")
+        return
+
+    nova_aluna = Aluna(nome, sobrenome, turma, notas, presenca, participacao)
+
+    base_de_dados.append(nova_aluna)
+    print(f"Aluna {nome} {sobrenome} adicionada com sucesso!")
+
+# Parte 2
+def listar_alunas():
+    if len(base_de_dados) == 0:
+        print("Não há alunas cadastradas.")
+    else:
+        print("Lista de alunas cadastradas:")
+        for aluna in base_de_dados:
+            print(f"- {aluna.nome} {aluna.sobrenome}")
+
+# Parte 3
+def consultar_faltas():
+    nome_completo = input("Digite o nome completo da aluna (Nome Sobrenome): ")
+    encontrada = False
+
+    for aluna in base_de_dados:
+        nome_completo_aluna = f"{aluna.nome} {aluna.sobrenome}"
+        if nome_completo_aluna.lower() == nome_completo.lower():
+            faltas = aluna.presenca.count(False)
+            print(f"A aluna {nome_completo} tem {faltas} faltas.")
+            encontrada = True
+            break
+
+    if not encontrada:
+        print(f"Aluna {nome_completo} não encontrada.")
+
+# Parte 4
+def consultar_notas():
+    nome_completo = input("Digite o nome completo da aluna (Nome Sobrenome): ")
+    encontrada = False
+
+    for aluna in base_de_dados:
+        nome_completo_aluna = f"{aluna.nome} {aluna.sobrenome}"
+        if nome_completo_aluna.lower() == nome_completo.lower():
+            print(f"As notas da aluna {nome_completo} são: {aluna.notas}")
+            encontrada = True
+            break
+
+    if not encontrada:
+        print(f"Aluna {nome_completo} não encontrada.")
+
+# Parte 5
+def consultar_status_aprovacao():
+    nome_completo = input("Digite o nome completo da aluna (Nome Sobrenome): ")
+    encontrada = False
+
+    for aluna in base_de_dados:
+        nome_completo_aluna = f"{aluna.nome} {aluna.sobrenome}"
+        if nome_completo_aluna.lower() == nome_completo.lower():
+
+            media_notas = sum(aluna.notas) / len(aluna.notas)
+
+            porcentagem_presenca = aluna.presenca.count(True) / len(aluna.presenca) * 100
+
+            nota_de_corte = 6
+            presenca_minima = 80
+            participacao_minima = 6
+
+            if media_notas >= nota_de_corte and porcentagem_presenca >= presenca_minima and aluna.participacao > participacao_minima:
+                print(f"A aluna {nome_completo} está APROVADA com média {media_notas:.2f}.")
+            else:
+                print(f"A aluna {nome_completo} está REPROVADA com média {media_notas:.2f}.")
+
+            print(f"Presença: {porcentagem_presenca:.2f}%")
+            print(f"Nota de participação: {aluna.participacao}")
+            encontrada = True
+            break
+
+    if not encontrada:
+        print(f"Aluna {nome_completo} não encontrada.")
+
+while(True):
+    print("1 - Adicionar aluna")
+    print("2 - Listar alunas")
+    print("3 - Consultar faltas")
+    print("4 - Consultar notas")
+    print("5 - Consultar status de aprovação")
+    Escolha = int(input("Escolha uma opção: "))
+    match Escolha:
+        case 1:
+            adicionar_aluna()
+        case 2:
+            listar_alunas()
+        case 3:
+            consultar_faltas()
+        case 4:
+            consultar_notas()
+        case 5:
+            consultar_status_aprovacao()
+        case _:
+            print("Opção inválida")
+            break
